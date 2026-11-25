@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terminal NFC - Pago Sin Contacto</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+background-color: #0f172a;
+color: #f8fafc;
+display: flex;
+justify-content: center;
+align-items: center;
+min-height: 100vh;
+padding: 16px;
+}
+.card {
+background: #1e293b;
+border: 1px solid #334155;
+border-radius: 24px;
+width: 100%;
+max-width: 360px;
+padding: 28px 24px;
+text-align: center;
+box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+}
+.header-tag {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+background: rgba(56, 189, 248, 0.12);
+color: #38bdf8;
+font-size: 0.75rem;
+font-weight: 700;
+letter-spacing: 0.8px;
+padding: 6px 12px;
+border-radius: 999px;
+text-transform: uppercase;
+margin-bottom: 20px;
+}
+.status-icon {
+width: 68px;
+height: 68px;
+border-radius: 50%;
+margin: 0 auto 16px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 32px;
+transition: all 0.3s ease;
+}
+.processing {
+border: 4px solid #334155;
+border-top-color: #38bdf8;
+animation: spin 0.9s linear infinite;
+}
+.approved {
+background: #10b981;
+color: #ffffff;
+box-shadow: 0 0 24px rgba(16, 185, 129, 0.45);
+animation: pop 0.35s ease-out;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pop { 0% { transform: scale(0.7); } 80% { transform: scale(1.08); } 100% { transform: scale(1); } }
+.status-title {
+font-size: 1.05rem;
+font-weight: 600;
+color: #94a3b8;
+margin-bottom: 6px;
+}
+.status-title.done { color: #10b981; }
+.amount {
+font-size: 2.5rem;
+font-weight: 800;
+letter-spacing: -1px;
+margin: 8px 0 4px;
+color: #ffffff;
+}
+.merchant {
+font-size: 0.9rem;
+color: #cbd5e1;
+margin-bottom: 22px;
+}
+.receipt-box {
+background: #0f172a;
+border-radius: 14px;
+padding: 16px;
+text-align: left;
+font-size: 0.82rem;
+color: #94a3b8;
+border: 1px solid #334155;
+display: none;
+}
+.row {
+display: flex;
+justify-content: space-between;
+padding: 6px 0;
+border-bottom: 1px dashed #1e293b;
+}
+.row:last-child { border-bottom: none; }
+.row strong { color: #f1f5f9; font-weight: 600; }
+.prank-footer {
+margin-top: 20px;
+padding-top: 14px;
+border-top: 1px solid #334155;
+font-size: 0.78rem;
+color: #f87171;
+font-weight: 600;
+display: none;
+}
+</style>
+</head>
+<body>
+<div class="card">
+<div class="header-tag">⚡ Tap-to-Pay NFC</div>
+<div class="status-icon processing" id="icon"></div>
+<div class="status-title" id="statusText">Procesando lectura NFC...</div>
+<div class="amount">L 5,490.00</div>
+<div class="merchant">Comercio: Membresía Vitalicia Club VIP</div>
+
+<div class="receipt-box" id="receipt">
+<div class="row"><span>Método</span><strong>NFC Sin Contacto</strong></div>
+<div class="row"><span>Terminal</span><strong>POS-HN-88412</strong></div>
+<div class="row"><span>Autorización</span><strong>#AUTH-90412</strong></div>
+<div class="row"><span>Fecha y hora</span><strong id="fechaHora"></strong></div>
+<div class="row"><span>Tipo de cargo</span><strong>Débito Directo</strong></div>
+</div>
+
+<div class="prank-footer" id="prankNotice">
+Simulación de broma NFC • No se realizó ningún cargo real.
+</div>
+</div>
+
+<script>
+const ahora = new Date();
+document.getElementById('fechaHora').textContent =
+ahora.toLocaleDateString('es-HN') + ' ' +
+ahora.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+setTimeout(() => {
+const icon = document.getElementById('icon');
+const statusText = document.getElementById('statusText');
+icon.classList.remove('processing');
+icon.classList.add('approved');
+icon.textContent = '✓';
+
+statusText.textContent = 'TRANSACCIÓN APROBADA';
+statusText.classList.add('done');
+
+document.getElementById('receipt').style.display = 'block';
+document.getElementById('prankNotice').style.display = 'block';
+
+if (navigator.vibrate) {
+navigator.vibrate([180, 90, 250]);
+}
+}, 1400);
+</script>
+</body>
+</html>
